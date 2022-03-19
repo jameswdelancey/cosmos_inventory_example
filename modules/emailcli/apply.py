@@ -11,4 +11,15 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/emailcli/main.py"
 if not os.path.exists(local_repo_path):
     subprocess.check_output(["git", "clone", repo_url, local_repo_path])
 
-subprocess.check_output(["git", "-C", local_repo_path, "pull"])
+git_output = subprocess.check_output(
+    ["git", "-C", local_repo_path, "reset", "--hard"]
+)
+logging.debug("git reset output: %s", git_output.decode())
+git_output = subprocess.check_output(
+    ["git", "-C", local_repo_path, "clean", "-fd"]
+)
+logging.debug("git clean output: %s", git_output.decode())
+git_output = subprocess.check_output(
+    ["git", "-C", local_repo_path, "pull"]
+)
+logging.debug("git pull output: %s", git_output.decode())
