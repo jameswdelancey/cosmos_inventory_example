@@ -17,7 +17,8 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/get_stocks/main.py"
 
 
 if not os.path.exists(local_repo_path):
-    subprocess.check_output(["git", "clone", repo_url, local_repo_path])
+    git_output = subprocess.check_output(["git", "clone", repo_url, local_repo_path])
+    logging.debug("git clone output: %s", git_output.decode())
 
 git_output = subprocess.check_output(
     ["git", "-C", local_repo_path, "reset", "--hard"]
