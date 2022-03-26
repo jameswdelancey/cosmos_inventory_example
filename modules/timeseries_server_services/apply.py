@@ -1,14 +1,18 @@
-import os
 import logging
+import os
 import subprocess
 
-sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR") # NOT FULL FILENAME
+local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
+os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
+local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
+sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 
 SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
 UNIT_FILE_PAYLOADS = []
 for server in SERVER_NAMES:
-    UNIT_FILE_PAYLOADS.append("""\
+    UNIT_FILE_PAYLOADS.append(
+        """\
 [Unit]
 Description=TimeseriesServer API Server %s
 StartLimitInterval=400
@@ -26,7 +30,9 @@ User=pi
 Group=pi
 [Install]
 WantedBy=multi-user.target
-""" % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server))
+"""
+        % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server)
+    )
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 
@@ -35,7 +41,7 @@ for fn in FILENAMES_FOR_UNITFILES:
     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
 # update local if repo changed
-repo_changed = "Already up to date." not in git_output.decode()
+repo_changed = True  # "Already up to date." not in git_output.decode()
 
 if repo_changed:
     os.chdir(local_repo_path)
@@ -66,24 +72,26 @@ if repo_changed:
             with open(unitfile_fullpath, "w") as f:
                 f.write(payload)
         except Exception as e:
-            logging.exception("error creating unitfile at path %s with error %s", unitfile_fullpath, repr(e))
+            logging.exception(
+                "error creating unitfile at path %s with error %s",
+                unitfile_fullpath,
+                repr(e),
+            )
 
     # refresh systemd daemon
     COMMANDS_TO_RUN = [
         ["systemctl", "daemon-reload"],
     ]
     for fn in FILENAMES_FOR_UNITFILES:
-        COMMANDS_TO_RUN.extend([["systemctl", "enable", fn],
-                                ["systemctl", "start", fn]])
+        COMMANDS_TO_RUN.extend(
+            [["systemctl", "enable", fn], ["systemctl", "start", fn]]
+        )
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh systemd daemon %s", repr(command))
         subprocess.check_output(command)
 
     # restart service
-    COMMANDS_TO_RUN = [
-        ["systemctl", "restart", fn]
-        for fn in FILENAMES_FOR_UNITFILES
-    ]
+    COMMANDS_TO_RUN = [["systemctl", "restart", fn] for fn in FILENAMES_FOR_UNITFILES]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to restart services %s", repr(command))
         subprocess.check_output(command)

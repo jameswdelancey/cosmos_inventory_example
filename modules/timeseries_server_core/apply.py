@@ -1,8 +1,9 @@
-import os
 import logging
+import os
 import subprocess
+
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
-sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR") # NOT FULL FILENAME
+sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
 os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
@@ -11,7 +12,8 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/mai
 SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
 UNIT_FILE_PAYLOADS = []
 for server in SERVER_NAMES:
-    UNIT_FILE_PAYLOADS.append("""\
+    UNIT_FILE_PAYLOADS.append(
+        """\
 [Unit]
 Description=TimeseriesServer API Server %s
 StartLimitInterval=400
@@ -29,20 +31,15 @@ User=pi
 Group=pi
 [Install]
 WantedBy=multi-user.target
-""" % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server))
+"""
+        % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server)
+    )
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 
 unitfile_fullpaths = []
 for fn in FILENAMES_FOR_UNITFILES:
     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
-
-
-# I dont want to use systemd for everything because it will not
-# work on windows but we can do something that works on both
-# 
-# timer_unit_file_full_fn = "/etc/systemd/system/ccam.timer"
-# service_unit_file_full_fn = "/etc/systemd/system/ccam.service"
 
 
 if not os.path.exists(local_repo_path):
@@ -53,13 +50,9 @@ else:
         ["git", "-C", local_repo_path, "reset", "--hard"]
     )
     logging.debug("git reset output: %s", git_output.decode())
-    git_output = subprocess.check_output(
-        ["git", "-C", local_repo_path, "clean", "-fd"]
-    )
+    git_output = subprocess.check_output(["git", "-C", local_repo_path, "clean", "-fd"])
     logging.debug("git clean output: %s", git_output.decode())
-    git_output = subprocess.check_output(
-        ["git", "-C", local_repo_path, "pull"]
-    )
+    git_output = subprocess.check_output(["git", "-C", local_repo_path, "pull"])
     logging.debug("git pull output: %s", git_output.decode())
 
 
@@ -95,24 +88,26 @@ if repo_changed:
             with open(unitfile_fullpath, "w") as f:
                 f.write(payload)
         except Exception as e:
-            logging.exception("error creating unitfile at path %s with error %s", unitfile_fullpath, repr(e))
+            logging.exception(
+                "error creating unitfile at path %s with error %s",
+                unitfile_fullpath,
+                repr(e),
+            )
 
     # refresh systemd daemon
     COMMANDS_TO_RUN = [
         ["systemctl", "daemon-reload"],
     ]
     for fn in FILENAMES_FOR_UNITFILES:
-        COMMANDS_TO_RUN.extend([["systemctl", "enable", fn],
-                                ["systemctl", "start", fn]])
+        COMMANDS_TO_RUN.extend(
+            [["systemctl", "enable", fn], ["systemctl", "start", fn]]
+        )
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh systemd daemon %s", repr(command))
         subprocess.check_output(command)
 
     # restart service
-    COMMANDS_TO_RUN = [
-        ["systemctl", "restart", fn]
-        for fn in FILENAMES_FOR_UNITFILES
-    ]
+    COMMANDS_TO_RUN = [["systemctl", "restart", fn] for fn in FILENAMES_FOR_UNITFILES]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to restart services %s", repr(command))
         subprocess.check_output(command)

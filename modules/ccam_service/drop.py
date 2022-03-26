@@ -1,8 +1,8 @@
+import logging
 import os
+import shutil
 import subprocess
 import urllib.request
-import logging
-import shutil
 
 FILENAME_FOR_UNITFILE = "ccam.service"
 PATH_FOR_UNITFILE = "/etc/systemd/system"
@@ -26,8 +26,10 @@ try:
         logging.info("running command to STOP and DISABLE services %s", repr(command))
         subprocess.check_output(command)
 except Exception as e:
-    logging.exception("error while stopping and disabling service with error %s", repr(e))
-    
+    logging.exception(
+        "error while stopping and disabling service with error %s", repr(e)
+    )
+
 # remove systemd unitfile
 try:
     os.unlink(unitfile_fullpath)
@@ -40,7 +42,9 @@ try:
         logging.info("running command to PURGE UNITFILE FROM SYSTEMD %s", repr(command))
         subprocess.check_output(command)
 except Exception as e:
-    logging.exception("error while PURGING UNIT FILE FROM SYSTEMD with error %s", repr(e))
+    logging.exception(
+        "error while PURGING UNIT FILE FROM SYSTEMD with error %s", repr(e)
+    )
 
 
 # data and config should be under other directories
@@ -51,4 +55,8 @@ try:
     os.unlink(LOCAL_FILE_PATH)
     logging.info("removed local repo at path: %s", LOCAL_FILE_PATH)
 except Exception as e:
-    logging.exception("could not remove local BINARY at path: %s, with error: %s", LOCAL_FILE_PATH, repr(e))
+    logging.exception(
+        "could not remove local BINARY at path: %s, with error: %s",
+        LOCAL_FILE_PATH,
+        repr(e),
+    )

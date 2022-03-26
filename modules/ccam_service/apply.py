@@ -1,6 +1,6 @@
+import logging
 import os
 import subprocess
-import logging
 import urllib.request
 
 UNIT_FILE_PAYLOAD = """\
@@ -39,7 +39,10 @@ COMMANDS_TO_RESTART_SERVICE = [
 ]
 
 if not os.path.exists(unitfile_fullpath):
-    logging.info("unitfile_fullpath %s does not exist, continuing with systemd install", unitfile_fullpath)
+    logging.info(
+        "unitfile_fullpath %s does not exist, continuing with systemd install",
+        unitfile_fullpath,
+    )
     # copy in binary
     logging.info("copying in binary from url %s", WEB_FILE_PATH)
     urllib.request.urlretrieve(WEB_FILE_PATH, LOCAL_FILE_PATH)
