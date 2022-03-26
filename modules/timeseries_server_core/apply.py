@@ -69,7 +69,8 @@ if repo_changed:
 
     # install poetry
     COMMANDS_TO_RUN = [
-        ["pip3", "install", "-y", "poetry"],
+        ["apt", "install", "-y", "python3-pip"],
+        ["pip3", "install", "poetry"],
     ]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to install poetry %s", repr(command))
