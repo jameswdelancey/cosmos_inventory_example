@@ -2,7 +2,7 @@ import os
 import logging
 import subprocess
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
-sqlite_path = os.environ.get("TIMESERIES_SERVER_SQLITE_PATH") # NOT FULL FILENAME
+sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_PATH") # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
 os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
