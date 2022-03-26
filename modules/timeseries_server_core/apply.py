@@ -18,7 +18,8 @@ StartLimitInterval=400
 StartLimitBurst=5
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 '%s' '%s'
+WorkingDirectory='%s'
+ExecStart=/usr/local/bin/poetry run python '%s' '%s'
 Restart=always
 RestartSec=30
 # WatchdogSec=60
@@ -27,7 +28,7 @@ User=pi
 Group=pi
 [Install]
 WantedBy=multi-user.target
-""" % (server, local_repo_python_entrypoint_long_fn, server))
+""" % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server))
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 
