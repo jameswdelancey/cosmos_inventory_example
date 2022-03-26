@@ -26,7 +26,7 @@ Group=pi
 [Install]
 WantedBy=multi-user.target
 """ for servers in SERVER_NAMES]
-FILENAMES_FOR_UNITFILES = [f"{}.service" for servers in SERVER_NAMES]
+FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 unitfile_fullpaths = ["%s/%s" % (PATH_FOR_UNITFILE, fn) for fn in FILENAMES_FOR_UNITFILES]
 
