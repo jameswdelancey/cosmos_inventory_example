@@ -82,9 +82,10 @@ if repo_changed:
     # refresh systemd daemon
     COMMANDS_TO_RUN = [
         ["systemctl", "daemon-reload"],
-    ] + [
-        ["systemctl", "enable", fn],
-        ["systemctl", "start", fn],
+    ]
+    [
+        COMMANDS_TO_RUN.extend([["systemctl", "enable", fn],
+                                ["systemctl", "start", fn]])
         for fn in FILENAMES_FOR_UNITFILES
     ]
     for command in COMMANDS_TO_RUN:
