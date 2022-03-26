@@ -11,12 +11,12 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/mai
 SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
 UNIT_FILE_PAYLOADS = [f"""\
 [Unit]
-Description=TimeseriesServer API Server {servers}
+Description=TimeseriesServer API Server %s
 StartLimitInterval=400
 StartLimitBurst=5
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 {local_repo_python_entrypoint_long_fn} {servers}
+ExecStart=/usr/bin/python3 '%s' '%s'
 Restart=always
 RestartSec=30
 # WatchdogSec=60
@@ -25,7 +25,7 @@ User=pi
 Group=pi
 [Install]
 WantedBy=multi-user.target
-""" for servers in SERVER_NAMES]
+""" % (local_repo_python_entrypoint_long_fn, server) for server in SERVER_NAMES]
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 unitfile_fullpaths = ["%s/%s" % (PATH_FOR_UNITFILE, fn) for fn in FILENAMES_FOR_UNITFILES]
