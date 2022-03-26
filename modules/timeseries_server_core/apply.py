@@ -9,7 +9,7 @@ os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
 
 SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
-UNIT_FILE_PAYLOADS = [f"""\
+UNIT_FILE_PAYLOADS = ["""\
 [Unit]
 Description=TimeseriesServer API Server %s
 StartLimitInterval=400
