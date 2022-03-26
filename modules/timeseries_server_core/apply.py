@@ -69,8 +69,8 @@ if repo_changed:
 
     # refresh poetry requirements
     COMMANDS_TO_RUN = [
-        ["poetry", "install"],
         ["pip3", "install", "poetry"],
+        ["poetry", "install"],
     ]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh poetry %s", repr(command))
