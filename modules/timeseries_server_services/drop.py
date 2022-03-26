@@ -1,4 +1,7 @@
-import os, logging, subprocess
+import logging
+import os
+import subprocess
+
 FILENAME_FOR_UNITFILE = "ccam.service"
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 unitfile_fullpath = "%s/%s" % (PATH_FOR_UNITFILE, FILENAME_FOR_UNITFILE)
