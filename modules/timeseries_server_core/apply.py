@@ -94,7 +94,7 @@ if repo_changed:
 
     # restart service
     COMMANDS_TO_RUN = [
-        ["systemctl", "restart", fn],
+        ["systemctl", "restart", fn]
         for fn in FILENAMES_FOR_UNITFILES
     ]
     for command in COMMANDS_TO_RUN:
