@@ -9,7 +9,9 @@ os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
 
 SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
-UNIT_FILE_PAYLOADS = ["""\
+UNIT_FILE_PAYLOADS = []
+for server in SERVER_NAMES:
+    UNIT_FILE_PAYLOADS.append("""\
 [Unit]
 Description=TimeseriesServer API Server %s
 StartLimitInterval=400
@@ -25,7 +27,7 @@ User=pi
 Group=pi
 [Install]
 WantedBy=multi-user.target
-""" % (local_repo_python_entrypoint_long_fn, server) for server in SERVER_NAMES]
+""" % (server, local_repo_python_entrypoint_long_fn, server))
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
 unitfile_fullpaths = ["%s/%s" % (PATH_FOR_UNITFILE, fn) for fn in FILENAMES_FOR_UNITFILES]
