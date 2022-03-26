@@ -69,7 +69,7 @@ if repo_changed:
 
     # refresh poetry requirements
     COMMANDS_TO_RUN = [
-        ["pip3", "install", "poetry"],
+        ["pip3", "install", "-y", "poetry"],
         ["poetry", "install"],
     ]
     for command in COMMANDS_TO_RUN:
