@@ -1,7 +1,7 @@
 import logging
 import os
-import subprocess
 import shutil
+import subprocess
 
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
 sqlite_path = os.environ.get("TIMESERIES_SERVER_SQLITE_PATH")  # NOT FULL FILENAME

@@ -40,31 +40,17 @@ unitfile_fullpaths = []
 for fn in FILENAMES_FOR_UNITFILES:
     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
-# update local if repo changed
-repo_changed = True  # "Already up to date." not in git_output.decode()
+UNIT_FILE_PAYLOADS_existing = []
+for fn in unitfile_fullpaths:
+    try:
+        with open(fn) as f:
+            UNIT_FILE_PAYLOADS_existing.apply(f.read())
+    except Exception as e:
+        logging.exception("error looking at current files with error %s", repr(e))
+        UNIT_FILE_PAYLOADS_existing.apply("")
 
-if repo_changed:
-    os.chdir(local_repo_path)
 
-    # install poetry
-    COMMANDS_TO_RUN = [
-        ["apt", "install", "-y", "python3-pip"],
-        ["pip3", "install", "poetry"],
-    ]
-    for command in COMMANDS_TO_RUN:
-        logging.info("running command to install poetry %s", repr(command))
-        subprocess.run(command)
-
-    # refresh poetry requirements
-    COMMANDS_TO_RUN = [
-        ["poetry", "install"],
-        ["chown", "-R", "pi:pi", local_repo_path],
-        ["chown", "-R", "pi:pi", sqlite_path],
-    ]
-    for command in COMMANDS_TO_RUN:
-        logging.info("running command to refresh poetry %s", repr(command))
-        subprocess.check_output(command)
-
+if UNIT_FILE_PAYLOADS != UNIT_FILE_PAYLOADS_existing:
     # reapply unitfile
     for unitfile_fullpath, payload in zip(unitfile_fullpaths, UNIT_FILE_PAYLOADS):
         try:
