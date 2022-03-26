@@ -30,7 +30,10 @@ WantedBy=multi-user.target
 """ % (server, local_repo_python_entrypoint_long_fn, server))
 FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 PATH_FOR_UNITFILE = "/etc/systemd/system"
-unitfile_fullpaths = ["%s/%s" % (PATH_FOR_UNITFILE, fn) for fn in FILENAMES_FOR_UNITFILES]
+
+unitfile_fullpaths = []
+for fn in FILENAMES_FOR_UNITFILES:
+    unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
 
 # I dont want to use systemd for everything because it will not
