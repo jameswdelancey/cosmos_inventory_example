@@ -89,11 +89,9 @@ if repo_changed:
     COMMANDS_TO_RUN = [
         ["systemctl", "daemon-reload"],
     ]
-    [
+    for fn in FILENAMES_FOR_UNITFILES:
         COMMANDS_TO_RUN.extend([["systemctl", "enable", fn],
                                 ["systemctl", "start", fn]])
-        for fn in FILENAMES_FOR_UNITFILES
-    ]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh systemd daemon %s", repr(command))
         subprocess.check_output(command)
