@@ -18,7 +18,7 @@ StartLimitInterval=400
 StartLimitBurst=5
 [Service]
 Type=simple
-WorkingDirectory='%s'
+WorkingDirectory=%s
 ExecStart=/usr/local/bin/poetry run python '%s' '%s'
 Restart=always
 RestartSec=30
