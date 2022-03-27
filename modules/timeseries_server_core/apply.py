@@ -3,8 +3,8 @@ import os
 import subprocess
 
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
-sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
-os.makedirs(sqlite_path, exist_ok=True)
+# sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
+# os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
 os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
@@ -75,7 +75,7 @@ if repo_changed:
     COMMANDS_TO_RUN = [
         ["poetry", "install"],
         ["chown", "-R", "pi:pi", local_repo_path],
-        ["chown", "-R", "pi:pi", sqlite_path],
+        # ["chown", "-R", "pi:pi", sqlite_path],
     ]
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh poetry %s", repr(command))

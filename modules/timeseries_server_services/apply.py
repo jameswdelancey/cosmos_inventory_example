@@ -1,8 +1,9 @@
 import logging
 import os
 import subprocess
+from tkinter import CURRENT
 
-repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
+# repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
 sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
@@ -42,39 +43,49 @@ for fn in FILENAMES_FOR_UNITFILES:
     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
 
-if not os.path.exists(local_repo_path):
-    git_output = subprocess.check_output(["git", "clone", repo_url, local_repo_path])
-    logging.debug("git clone output: %s", git_output.decode())
-else:
-    git_output = subprocess.check_output(
-        ["git", "-C", local_repo_path, "reset", "--hard"]
-    )
-    logging.debug("git reset output: %s", git_output.decode())
-    git_output = subprocess.check_output(["git", "-C", local_repo_path, "clean", "-fd"])
-    logging.debug("git clean output: %s", git_output.decode())
-    git_output = subprocess.check_output(["git", "-C", local_repo_path, "pull"])
-    logging.debug("git pull output: %s", git_output.decode())
+# if not os.path.exists(local_repo_path):
+#     git_output = subprocess.check_output(["git", "clone", repo_url, local_repo_path])
+#     logging.debug("git clone output: %s", git_output.decode())
+# else:
+#     git_output = subprocess.check_output(
+#         ["git", "-C", local_repo_path, "reset", "--hard"]
+#     )
+#     logging.debug("git reset output: %s", git_output.decode())
+#     git_output = subprocess.check_output(["git", "-C", local_repo_path, "clean", "-fd"])
+#     logging.debug("git clean output: %s", git_output.decode())
+#     git_output = subprocess.check_output(["git", "-C", local_repo_path, "pull"])
+#     logging.debug("git pull output: %s", git_output.decode())
 
 
-# update local if repo changed
-repo_changed = "Already up to date." not in git_output.decode()
+# # update local if repo changed
+# repo_changed = "Already up to date." not in git_output.decode()
 
+CURRENT_PAYLOADS = UNIT_FILE_PAYLOADS
+PAST_PAYLOADS = []
+for fn in unitfile_fullpaths:
+    try:
+        with open(fn) as f:
+            PAST_PAYLOADS.append(f.read())
+    except Exception as e:
+        PAST_PAYLOADS.append("")
+repo_changed = CURRENT_PAYLOADS != PAST_PAYLOADS
+logging.info("repo_chaged is %s", repo_changed)
 if repo_changed:
     os.chdir(local_repo_path)
 
-    # install poetry
-    COMMANDS_TO_RUN = [
-        ["apt", "install", "-y", "python3-pip"],
-        ["pip3", "install", "poetry"],
-    ]
-    for command in COMMANDS_TO_RUN:
-        logging.info("running command to install poetry %s", repr(command))
-        subprocess.run(command)
+    # # install poetry
+    # COMMANDS_TO_RUN = [
+    #     ["apt", "install", "-y", "python3-pip"],
+    #     ["pip3", "install", "poetry"],
+    # ]
+    # for command in COMMANDS_TO_RUN:
+    #     logging.info("running command to install poetry %s", repr(command))
+    #     subprocess.run(command)
 
     # refresh poetry requirements
     COMMANDS_TO_RUN = [
-        ["poetry", "install"],
-        ["chown", "-R", "pi:pi", local_repo_path],
+        # ["poetry", "install"],
+        # ["chown", "-R", "pi:pi", local_repo_path],
         ["chown", "-R", "pi:pi", sqlite_path],
     ]
     for command in COMMANDS_TO_RUN:
