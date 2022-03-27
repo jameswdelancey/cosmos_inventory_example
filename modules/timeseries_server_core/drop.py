@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import subprocess
 
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
 sqlite_path = os.environ.get("TIMESERIES_SERVER_SQLITE_PATH")  # NOT FULL FILENAME
@@ -8,6 +9,15 @@ sqlite_path = os.environ.get("TIMESERIES_SERVER_SQLITE_PATH")  # NOT FULL FILENA
 local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
 # os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
+
+
+# refresh poetry requirements
+COMMANDS_TO_RUN = [
+    ["poetry", "--uninstall"],
+]
+for command in COMMANDS_TO_RUN:
+    logging.info("running command to refresh poetry %s", repr(command))
+    subprocess.check_output(command)
 
 
 try:
