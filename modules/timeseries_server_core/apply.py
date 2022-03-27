@@ -9,7 +9,7 @@ local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
 os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
 
-# SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
+SERVER_NAMES = ["run_collection_server", "run_ui_server", "run_detectors"]
 # UNIT_FILE_PAYLOADS = []
 # for server in SERVER_NAMES:
 #     UNIT_FILE_PAYLOADS.append(
@@ -34,7 +34,7 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/mai
 # """
 #         % (server, local_repo_path, local_repo_python_entrypoint_long_fn, server)
 #     )
-# FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
+FILENAMES_FOR_UNITFILES = [f"{server}.service" for server in SERVER_NAMES]
 # PATH_FOR_UNITFILE = "/etc/systemd/system"
 
 # unitfile_fullpaths = []
@@ -98,13 +98,13 @@ if repo_changed:
     # COMMANDS_TO_RUN = [
     #     ["systemctl", "daemon-reload"],
     # ]
-    # for fn in FILENAMES_FOR_UNITFILES:
-    #     COMMANDS_TO_RUN.extend(
-    #         [["systemctl", "enable", fn], ["systemctl", "start", fn]]
-    #     )
-    # for command in COMMANDS_TO_RUN:
-    #     logging.info("running command to refresh systemd daemon %s", repr(command))
-    #     subprocess.check_output(command)
+    for fn in FILENAMES_FOR_UNITFILES:
+        COMMANDS_TO_RUN.extend(
+            [["systemctl", "restart", fn]]
+        )
+    for command in COMMANDS_TO_RUN:
+        logging.info("running command to refresh systemd daemon %s", repr(command))
+        subprocess.run(command)
 
     # # restart service
     # COMMANDS_TO_RUN = [["systemctl", "restart", fn] for fn in FILENAMES_FOR_UNITFILES]
