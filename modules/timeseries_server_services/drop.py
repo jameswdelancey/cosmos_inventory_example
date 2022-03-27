@@ -1,6 +1,5 @@
 import logging
 import os
-import shutil
 import subprocess
 
 repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
