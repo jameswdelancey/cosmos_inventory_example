@@ -1,7 +1,6 @@
 import logging
 import os
 import subprocess
-from tkinter import CURRENT
 
 # repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
 sqlite_path = os.environ.get("TIMESERIES_SERVER_DATA_DIR")  # NOT FULL FILENAME
