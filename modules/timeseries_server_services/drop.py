@@ -2,59 +2,20 @@ import logging
 import os
 import subprocess
 
-FILENAME_FOR_UNITFILE = "ccam.service"
-PATH_FOR_UNITFILE = "/etc/systemd/system"
-unitfile_fullpath = "%s/%s" % (PATH_FOR_UNITFILE, FILENAME_FOR_UNITFILE)
+repo_url = os.environ.get("TIMESERIES_SERVER_REPO")
+sqlite_path = os.environ.get("TIMESERIES_SERVER_SQLITE_PATH")  # NOT FULL FILENAME
+# os.makedirs(sqlite_path, exist_ok=True)
+local_repo_path = os.environ.get("TIMESERIES_SERVER_REPO_PATH")
+# os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
+local_repo_python_entrypoint_long_fn = local_repo_path + "/timeseries_server/main.py"
 
-WEB_FILE_PATH = os.environ.get("S3_BUCKET_ARTIFACTS") + "/ccam"
-LOCAL_FILE_PATH = "/usr/local/bin/ccam"
 
-COMMANDS_TO_STOP_AND_DISABLE_SERVICE = [
-    ["systemctl", "disable", FILENAME_FOR_UNITFILE],
-    ["systemctl", "stop", FILENAME_FOR_UNITFILE],
-]
-
-COMMANDS_TO_PURGE_SYSTEMD_CONFIG = [
-    ["systemctl", "daemon-reload"],
-]
-
-# DISABLE unit file
 try:
-    for command in COMMANDS_TO_STOP_AND_DISABLE_SERVICE:
-        logging.info("running command to STOP and DISABLE services %s", repr(command))
-        subprocess.check_output(command)
+    shutil.rmtree(local_repo_path)
+    logging.info("removed local repo at path: %s", local_repo_path)
 except Exception as e:
     logging.exception(
-        "error while stopping and disabling service with error %s", repr(e)
-    )
-
-# remove systemd unitfile
-try:
-    os.unlink(unitfile_fullpath)
-except Exception as e:
-    logging.exception("error removing systemd unit file with error %s", repr(e))
-
-# PURGE COMMANDS TO SYSTEMD CONFIG
-try:
-    for command in COMMANDS_TO_PURGE_SYSTEMD_CONFIG:
-        logging.info("running command to PURGE UNITFILE FROM SYSTEMD %s", repr(command))
-        subprocess.check_output(command)
-except Exception as e:
-    logging.exception(
-        "error while PURGING UNIT FILE FROM SYSTEMD with error %s", repr(e)
-    )
-
-
-# data and config should be under other directories
-# set by environment vars, therefore they will not be
-# deleted with the following operation to remove the
-# repo
-try:
-    os.unlink(LOCAL_FILE_PATH)
-    logging.info("removed local repo at path: %s", LOCAL_FILE_PATH)
-except Exception as e:
-    logging.exception(
-        "could not remove local BINARY at path: %s, with error: %s",
-        LOCAL_FILE_PATH,
+        "could not remove local repo at path: %s, with error: %s",
+        local_repo_path,
         repr(e),
     )
