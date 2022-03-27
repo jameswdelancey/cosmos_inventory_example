@@ -71,12 +71,12 @@ if repo_changed:
         logging.info("running command to install poetry %s", repr(command))
         subprocess.run(command)
 
-    # # refresh poetry requirements
-    # COMMANDS_TO_RUN = [
-    #     ["poetry", "install"],
-    #     ["chown", "-R", "pi:pi", local_repo_path],
-    #     ["chown", "-R", "pi:pi", sqlite_path],
-    # ]
-    # for command in COMMANDS_TO_RUN:
-    #     logging.info("running command to refresh poetry %s", repr(command))
-    #     subprocess.check_output(command)
+    # refresh poetry requirements
+    COMMANDS_TO_RUN = [
+        ["poetry", "install"],
+        ["chown", "-R", "pi:pi", local_repo_path],
+        ["chown", "-R", "pi:pi", sqlite_path],
+    ]
+    for command in COMMANDS_TO_RUN:
+        logging.info("running command to refresh poetry %s", repr(command))
+        subprocess.check_output(command)
