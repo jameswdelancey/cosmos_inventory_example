@@ -3,7 +3,9 @@ import os
 import subprocess
 
 repo_url = os.environ.get("GET_STOCKS_REPO")
-sqlite_path = os.environ.get("GET_STOCKS_SQLITE_PATH")  # NOT FULL FILENAME
+config_path = os.environ.get("GET_STOCKS_CONFIG_PATH")  # NOT FULL FILENAME
+os.makedirs(config_path, exist_ok=True)
+sqlite_path = os.environ.get("GET_STOCKS_DATA_PATH")  # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("GET_STOCKS_REPO_PATH")
 os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
