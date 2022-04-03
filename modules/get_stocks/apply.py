@@ -43,7 +43,7 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/get_stocks/main.py"
 # unitfile_fullpaths = []
 # for fn in FILENAMES_FOR_UNITFILES:
 #     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
-
+repo_changed = False
 for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
     if not os.path.exists(_path):
         git_output = subprocess.check_output(["git", "clone", _url, _path])
@@ -57,7 +57,7 @@ for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
         logging.debug("git pull output: %s", git_output.decode())
 
     # update local if repo changed
-    repo_changed = "Already up to date." not in git_output.decode()
+    repo_changed = repo_changed or "Already up to date." not in git_output.decode()
 
     if repo_changed:
         os.chdir(local_repo_path)
@@ -153,7 +153,7 @@ for fn in unitfile_fullpaths:
             PAST_PAYLOADS.append(f.read())
     except Exception as e:
         PAST_PAYLOADS.append("")
-repo_changed = CURRENT_PAYLOADS != PAST_PAYLOADS
+repo_changed = repo_changed or CURRENT_PAYLOADS != PAST_PAYLOADS
 logging.info("repo_chaged is %s", repo_changed)
 if repo_changed:
     os.chdir(local_repo_path)
