@@ -4,7 +4,7 @@ import subprocess
 
 repo_url = os.environ.get("GET_STOCKS_REPO")
 config_path = os.environ.get("GET_STOCKS_CONFIG_DIR")  # NOT FULL FILENAME
-os.makedirs(config_path, exist_ok=True)
+# os.makedirs(config_path, exist_ok=True)
 sqlite_path = os.environ.get("GET_STOCKS_DATA_DIR")  # NOT FULL FILENAME
 os.makedirs(sqlite_path, exist_ok=True)
 local_repo_path = os.environ.get("GET_STOCKS_REPO_PATH")
@@ -44,7 +44,7 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/get_stocks/main.py"
 # for fn in FILENAMES_FOR_UNITFILES:
 #     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
-for _path, _url in [[local_repo_path, repo_url], [config_repo, config_path]]:
+for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
     if not os.path.exists(_path):
         git_output = subprocess.check_output(["git", "clone", _url, _path])
         logging.debug("git clone output: %s", git_output.decode())
