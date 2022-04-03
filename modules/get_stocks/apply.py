@@ -75,7 +75,7 @@ for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
         COMMANDS_TO_RUN = [
             ["poetry", "install"],
             ["chown", "-R", "pi:pi", local_repo_path],
-            ["chown", "-R", "pi:pi", config_repo],
+            ["chown", "-R", "pi:pi", config_path],
             ["chown", "-R", "pi:pi", sqlite_path],
         ]
         for command in COMMANDS_TO_RUN:
