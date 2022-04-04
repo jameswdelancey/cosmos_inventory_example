@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import urllib.request
 
 repo_url = os.environ.get("GET_STOCKS_REPO")
 config_path = os.environ.get("GET_STOCKS_CONFIG_DIR")  # NOT FULL FILENAME
@@ -43,6 +44,23 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/get_stocks/main.py"
 # unitfile_fullpaths = []
 # for fn in FILENAMES_FOR_UNITFILES:
 #     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
+if not os.path.exists("/tmp/ta-lib"):
+    # dl http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+    output = subprocess.run(["apt", "install", "-y", "build-essential", "make"])
+    urllib.request.urlretrieve("http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz", "/var/lib/ta-lib-0.4.0-src.tar.gz")
+    os.chdir("/var/lib")
+    output = subprocess.run(["tar", "-xzf", "ta-lib-0.4.0-src.tar.gz"])
+    logging.info("untar talib "+repr(output))
+    os.unlink("/var/lib/ta-lib-0.4.0-src.tar.gz")
+    os.chdir("/var/lib/ta-lib")
+    output = subprocess.run(["./configure", "--prefix=/usr"])
+    logging.info("configure talib "+repr(output))
+    output = subprocess.run(["make"])
+    logging.info("make talib "+repr(output))
+    output = subprocess.run(["make", "install"])
+    logging.info("make install talib "+repr(output))
+    
+
 repo_changed = False
 for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
     if not os.path.exists(_path):
@@ -64,7 +82,7 @@ for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
 
         # install poetry
         COMMANDS_TO_RUN = [
-            ["apt", "install", "-y", "python3-pip"],
+            ["apt", "install", "-y", "python3-pip", "python3-dev"],
             ["pip3", "install", "poetry"],
         ]
         for command in COMMANDS_TO_RUN:
