@@ -44,7 +44,7 @@ local_repo_python_entrypoint_long_fn = local_repo_path + "/get_stocks/main.py"
 # unitfile_fullpaths = []
 # for fn in FILENAMES_FOR_UNITFILES:
 #     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
-if not os.path.exists("/tmp/ta-lib"):
+if not os.path.exists("/var/lib/ta-lib"):
     # dl http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
     output = subprocess.run(["apt", "install", "-y", "build-essential", "make"])
     urllib.request.urlretrieve("http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz", "/var/lib/ta-lib-0.4.0-src.tar.gz")
