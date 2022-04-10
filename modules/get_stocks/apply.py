@@ -131,7 +131,7 @@ for _path, _url in [[local_repo_path, repo_url], [config_path, config_repo]]:
         #     logging.info("running command to restart services %s", repr(command))
         #     subprocess.check_output(command)
 
-SERVER_NAMES = ["refresh_policies"]
+SERVER_NAMES = ["refresh_policies", "get_stocks_web_ui"]
 UNIT_FILE_PAYLOADS = []
 for server in SERVER_NAMES:
     UNIT_FILE_PAYLOADS.append(
