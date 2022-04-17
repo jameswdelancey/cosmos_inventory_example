@@ -60,6 +60,21 @@ else:
 repo_changed = "Already up to date." not in git_output.decode()
 
 if repo_changed:
+    # install poetry
+    COMMANDS_TO_RUN = [
+        ["apt", "install", "-y", "python3-pip"],
+        ["pip3", "install", "poetry"],
+    ]
+    for command in COMMANDS_TO_RUN:
+        logging.info("running command to install poetry %s", repr(command))
+        subprocess.run(command)
+
+    # refresh poetry requirements
+    COMMANDS_TO_RUN = [
+        ["poetry", "install"],
+        ["chown", "-R", "pi:pi", local_repo_path],
+    ]
+
     # reapply unitfile
     for unitfile_fullpath, payload in zip(unitfile_fullpaths, UNIT_FILE_PAYLOADS):
         try:
