@@ -11,7 +11,7 @@ os.makedirs(config_url, exist_ok=True)
 local_repo_path = os.environ.get("CCAM_WEB_SERVER_REPO_PATH")
 local_repo_python_entrypoint_long_fn = local_repo_path + "/ccam_web_server/main.py"
 
-SERVER_NAMES = ["run_ccam_ftp_server"]
+SERVER_NAMES = ["run_ccam_ftp_server", "run_ccam_web_server"]
 UNIT_FILE_PAYLOADS = []
 for server in SERVER_NAMES:
     UNIT_FILE_PAYLOADS.append(
