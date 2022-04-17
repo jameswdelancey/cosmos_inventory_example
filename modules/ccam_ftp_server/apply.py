@@ -60,6 +60,19 @@ else:
 repo_changed = "Already up to date." not in git_output.decode()
 
 if repo_changed:
+    # reapply unitfile
+    for unitfile_fullpath, payload in zip(unitfile_fullpaths, UNIT_FILE_PAYLOADS):
+        try:
+            logging.info("creating unitfile at path %s", unitfile_fullpath)
+            with open(unitfile_fullpath, "w") as f:
+                f.write(payload)
+        except Exception as e:
+            logging.exception(
+                "error creating unitfile at path %s with error %s",
+                unitfile_fullpath,
+                repr(e),
+            )
+
     os.chdir(local_repo_path)
 
     # refresh systemd daemon
@@ -73,18 +86,6 @@ if repo_changed:
     for command in COMMANDS_TO_RUN:
         logging.info("running command to refresh systemd daemon %s", repr(command))
         subprocess.check_output(command)
-    # reapply unitfile
-    for unitfile_fullpath, payload in zip(unitfile_fullpaths, UNIT_FILE_PAYLOADS):
-        try:
-            logging.info("creating unitfile at path %s", unitfile_fullpath)
-            with open(unitfile_fullpath, "w") as f:
-                f.write(payload)
-        except Exception as e:
-            logging.exception(
-                "error creating unitfile at path %s with error %s",
-                unitfile_fullpath,
-                repr(e),
-            )
 
     # restart service
     COMMANDS_TO_RUN = [["systemctl", "restart", fn] for fn in FILENAMES_FOR_UNITFILES]
