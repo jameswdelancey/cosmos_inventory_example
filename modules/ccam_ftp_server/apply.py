@@ -60,6 +60,7 @@ else:
 repo_changed = "Already up to date." not in git_output.decode()
 
 if repo_changed:
+    os.chdir(local_repo_path)
     # install poetry
     COMMANDS_TO_RUN = [
         ["apt", "install", "-y", "python3-pip"],
@@ -88,7 +89,6 @@ if repo_changed:
                 repr(e),
             )
 
-    os.chdir(local_repo_path)
 
     # refresh systemd daemon
     COMMANDS_TO_RUN = [
