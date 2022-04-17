@@ -43,31 +43,51 @@ unitfile_fullpaths = []
 for fn in FILENAMES_FOR_UNITFILES:
     unitfile_fullpaths.append("%s/%s" % (PATH_FOR_UNITFILE, fn))
 
-COMMANDS_TO_START_AND_ENABLE_SERVICE = [
-    ["systemctl", "daemon-reload"],
-    ["systemctl", "enable", FILENAME_FOR_UNITFILE],
-    ["systemctl", "start", FILENAME_FOR_UNITFILE],
-]
-
-COMMANDS_TO_RESTART_SERVICE = [
-    ["systemctl", "restart", FILENAME_FOR_UNITFILE],
-]
-
-if not os.path.exists(unitfile_fullpath):
-    logging.info(
-        "unitfile_fullpath %s does not exist, continuing with systemd install",
-        unitfile_fullpath,
+if not os.path.exists(local_repo_path):
+    git_output = subprocess.check_output(["git", "clone", repo_url, local_repo_path])
+    logging.debug("git clone output: %s", git_output.decode())
+else:
+    git_output = subprocess.check_output(
+        ["git", "-C", local_repo_path, "reset", "--hard"]
     )
-    # copy in binary
-    logging.info("copying in binary from url %s", WEB_FILE_PATH)
-    urllib.request.urlretrieve(WEB_FILE_PATH, LOCAL_FILE_PATH)
+    logging.debug("git reset output: %s", git_output.decode())
+    git_output = subprocess.check_output(["git", "-C", local_repo_path, "clean", "-fd"])
+    logging.debug("git clean output: %s", git_output.decode())
+    git_output = subprocess.check_output(["git", "-C", local_repo_path, "pull"])
+    logging.debug("git pull output: %s", git_output.decode())
 
-    logging.info("creating unitfile at path %s", unitfile_fullpath)
-    # write unit file
-    with open(unitfile_fullpath, "w") as f:
-        f.write(UNIT_FILE_PAYLOAD)
+# update local if repo changed
+repo_changed = "Already up to date." not in git_output.decode()
 
-    # enable unit file
-    for command in COMMANDS_TO_START_AND_ENABLE_SERVICE:
-        logging.info("running command to start and enable services %s", repr(command))
+if repo_changed:
+    os.chdir(local_repo_path)
+
+    # refresh systemd daemon
+    COMMANDS_TO_RUN = [
+        ["systemctl", "daemon-reload"],
+    ]
+    for fn in FILENAMES_FOR_UNITFILES:
+        COMMANDS_TO_RUN.extend(
+            [["systemctl", "enable", fn], ["systemctl", "start", fn]]
+        )
+    for command in COMMANDS_TO_RUN:
+        logging.info("running command to refresh systemd daemon %s", repr(command))
+        subprocess.check_output(command)
+    # reapply unitfile
+    for unitfile_fullpath, payload in zip(unitfile_fullpaths, UNIT_FILE_PAYLOADS):
+        try:
+            logging.info("creating unitfile at path %s", unitfile_fullpath)
+            with open(unitfile_fullpath, "w") as f:
+                f.write(payload)
+        except Exception as e:
+            logging.exception(
+                "error creating unitfile at path %s with error %s",
+                unitfile_fullpath,
+                repr(e),
+            )
+
+    # restart service
+    COMMANDS_TO_RUN = [["systemctl", "restart", fn] for fn in FILENAMES_FOR_UNITFILES]
+    for command in COMMANDS_TO_RUN:
+        logging.info("running command to restart services %s", repr(command))
         subprocess.check_output(command)
