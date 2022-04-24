@@ -9,7 +9,7 @@ local_repo_path = os.environ.get("EMAILCLI_REPO_PATH")
 # os.makedirs(os.path.dirname(local_repo_path), exist_ok=True)
 local_repo_python_entrypoint_long_fn = local_repo_path + "/emailcli/main.py"
 
-SERVER_NAMES = []
+SERVER_NAMES = ["run_emailcli_service"]
 UNIT_FILE_PAYLOADS = []
 for server in SERVER_NAMES:
     UNIT_FILE_PAYLOADS.append(
