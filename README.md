@@ -1,7 +1,25 @@
-# cosmos_inventory_example
-an example inventory repository for cosmos
+# Cosmos Inventory Example
 
-The cosmos repository, the place where the software that consumes this example is located:
- - https://github.com/jameswdelancey/cosmos_inventory_example
+This repository serves as an example inventory for Cosmos, a lightweight alternative to configuration management tools like Ansible, Salt, Puppet, and Chef.
 
-Cosmos is a lightweight alternative for Ansible, Salt, Puppet, Chef
+The primary Cosmos repository, where the software utilizing this example resides, can be found at:
+
+- [cosmos](https://github.com/jameswdelancey/cosmos)
+
+## Overview
+
+Cosmos offers a simplified approach to managing configurations, and this inventory example demonstrates its usage in practical scenarios.
+
+## Repository Link
+
+For access to the primary Cosmos repository, visit:
+
+- [cosmos](https://github.com/jameswdelancey/cosmos)
+
+## About Cosmos
+
+Cosmos presents itself as a lightweight alternative to traditional configuration management tools, offering simplicity and efficiency in managing system configurations.
+
+## License
+
+This Cosmos Inventory Example is open-source software, available under the MIT license.
